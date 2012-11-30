@@ -35,7 +35,9 @@ public class Solution {
 	 */
 	public static void main(String[] args) {
 		sudoku = new Sudoku();
-		initSudokuBoard();
+		//initExpert();
+		initEasy();
+		//initHard();
 		sudoku.printSudokuBoard(false);
 		sudoku.solve();
 		
@@ -51,7 +53,7 @@ public class Solution {
 	}
 	
 	// You can erease this method since this was only to test.
-	private static void initSudokuBoard(){
+	private static void initExpert(){
 		
 		// genina.com random expert sudoku   iterations
 		sudoku.insertNumber(0, 2, 1);
@@ -93,9 +95,10 @@ public class Solution {
 		
 		
 		 */
+	}
+	static void initHard(){
+		// genina.com random hard sudoku  3 iterations
 		
-		// genina.com random hard sudoku  5 iterations
-		/*
 		sudoku.insertNumber(0, 6, 2);
 		sudoku.insertNumber(0, 7, 7);
 		sudoku.insertNumber(1, 0, 1);
@@ -124,12 +127,14 @@ public class Solution {
 		sudoku.insertNumber(7, 7, 3);
 		sudoku.insertNumber(7, 8, 1);
 		sudoku.insertNumber(8, 1, 1);
-		sudoku.insertNumber(8, 2, 4);*/
+		sudoku.insertNumber(8, 2, 4);
+	}
+	
+	static void initEasy(){
 		
 		
+		// genina.com random easy sudoku 2 iterations
 		
-		// genina.com random easy sudoku 3 iterations
-		/*
 		sudoku.insertNumber(0, 0, 7);
 		sudoku.insertNumber(0, 8, 9);
 		sudoku.insertNumber(1, 1, 5);
@@ -161,6 +166,6 @@ public class Solution {
 		sudoku.insertNumber(7, 6, 9);
 		sudoku.insertNumber(7, 7, 6);
 		sudoku.insertNumber(8, 0, 4);
-		sudoku.insertNumber(8, 8, 1);*/
+		sudoku.insertNumber(8, 8, 1);
 	}
 }
