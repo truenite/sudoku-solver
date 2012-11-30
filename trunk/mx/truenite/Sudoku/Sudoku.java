@@ -48,7 +48,6 @@ public class Sudoku {
 	/**
 	 * Class constructor. Iterations limit = 1500
 	 */
-	@SuppressWarnings("unchecked")
 	public Sudoku(){
 		sudoku =  new int[9][9];
 		one = new boolean[3][3];
@@ -66,7 +65,6 @@ public class Sudoku {
 	/**
 	 * Class constructor with a set iterations limit.
 	 */
-	@SuppressWarnings("unchecked")
 	public Sudoku(int lim){
 		limit = lim;
 		sudoku =  new int[9][9];
@@ -204,8 +202,7 @@ public class Sudoku {
 	}
 	
 	// Prints each numbers boolean grid. Used for testing aswell.
-	@SuppressWarnings("unused")
-	private void printNumber(int number){ 
+	public void printNumber(int number){ 
 		switch(number){
 		case 1:
 			for(int i = 0; i < 3;i++){
@@ -369,6 +366,7 @@ public class Sudoku {
 			counter++;
 			//System.out.println(counter);
 		}
+		System.out.println(counter);
 		return checkSolved();
 	}
 	
@@ -399,42 +397,36 @@ public class Sudoku {
 				}
 			}
 		}
-
-		// Where only 1 number can be inserted in a cell due to quadrant restrictions. Means, the number could go in other squares
-		// But for that cell theres only one option.
-		for(int i = 0; i <3;i++){
-			for(int j = 0; j <3; j++){
-				for(int k = 0;k<3;k++){
-					for(int l = 0;l<3;l++){
-						//System.out.println("Canset en: "+(k+(i*3))+", "+(l+(j*3))+" "+canSet[k+(i*3)][l+(j*3)]);
-						if(canSet[k+(i*3)][l+(j*3)].size()==1){
-							//System.out.println("inserting2: "+canSet[k+(i*3)][l+(j*3)].first()+" en "+(k+(i*3))+", "+(l+(j*3)));
-							insertNumber(k+(i*3), l+(j*3), canSet[k+(i*3)][l+(j*3)].first());
-						}
-					}
-				}
-			}
-		}
-		// Where only 1 number can be inserted in a cell due to line restrictions. Means, the number could go in other squares
-		// But for that cell theres only one option.
-		for(int i = 0; i <3;i++){
-			for(int j = 0; j <3; j++){
+		
+		// Where a number can only be in one cell in a row or column.
+		// Means there's no other option so we insert.
+		for(int i = 0; i <9;i++){
+			for(int j = 0; j <9; j++){
 				for(Integer n:canSet[i][j]) {
-					int countk = 0;
+					int counti = 0;
 					int countj = 0;
 			        for(int k = 0; k <9;k++){
 			        	if(canSet[i][k].contains(n))
-			        		countk++;
+			        		counti++;
 			        	if(canSet[k][j].contains(n))
 			        		countj++;
 			        		
 			        }
-			        if(1 == countk || 1 == countj){
+			        if(1 == counti || 1 == countj){
 			        	insertNumber(i,j,n);
 			        	//System.out.println("inserting3: "+n+" en "+i+", "+j+" canset en: "+canSet[i][j]);
 			        	break;
 			        }
 			    }
+			}
+		}
+		// Where there's only 1 number that can be inserted in a cell. Means, the number could go in other squares
+		// But for that cell there's only one option.
+		for(int i = 0; i <9;i++){
+			for(int j = 0; j <9; j++){
+				if(canSet[i][j].size()==1){
+					insertNumber(i, j, canSet[i][j].first());
+				}
 			}
 		}
 	}
