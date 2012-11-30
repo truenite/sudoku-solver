@@ -1,0 +1,1 @@
+Please refer to LICENSE.txt for the license.
