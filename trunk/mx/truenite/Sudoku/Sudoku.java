@@ -24,9 +24,7 @@ package mx.truenite.Sudoku;
 
 import java.util.TreeSet;
 
-/**
- * 
- */
+
 public class Sudoku {
 	// Sudoku grid
 	private int[][] sudoku;
@@ -43,8 +41,14 @@ public class Sudoku {
 	private boolean[][] nine;
 	// Flags. True if if its solved for x number.
 	private boolean oneSolved, twoSolved, threeSolved, fourSolved, fiveSolved, sixSolved, sevenSolved, eightSolved, nineSolved = false;
-	private TreeSet<Integer>[][] canSet; 
+	private TreeSet<Integer>[][] canSet;
+	// default iterations limit
+	private int limit = 1500;
 	
+	/**
+	 * Class constructor. Iterations limit = 1500
+	 */
+	@SuppressWarnings("unchecked")
 	public Sudoku(){
 		sudoku =  new int[9][9];
 		one = new boolean[3][3];
@@ -59,7 +63,31 @@ public class Sudoku {
 		canSet = new TreeSet[9][9];
 	}
 	
+	/**
+	 * Class constructor with a set iterations limit.
+	 */
+	@SuppressWarnings("unchecked")
+	public Sudoku(int lim){
+		limit = lim;
+		sudoku =  new int[9][9];
+		one = new boolean[3][3];
+		two = new boolean[3][3];
+		three = new boolean[3][3];
+		four = new boolean[3][3];
+		five = new boolean[3][3];
+		six = new boolean[3][3];
+		seven = new boolean[3][3];
+		eight = new boolean[3][3];
+		nine = new boolean[3][3];
+		canSet = new TreeSet[9][9];
+	}
+	
 
+	/**
+	 * Returns true if the Sudoku game is solved. False otherwise.
+	 * 
+	 * @return boolean
+	 */
 	public boolean checkSolved(){
 		oneSolved = checkSolved(one);
 		twoSolved = checkSolved(two);
@@ -82,7 +110,9 @@ public class Sudoku {
 	}
 	
 	/**
-	 * @param printCanSetFlag
+	 *  Prints the Sudoku board in console. 
+	 * 
+	 * @param printCanSetFlag pass true if you want to see the canSet board. This is not well formated.
 	 */
 	public void printSudokuBoard(boolean printCanSetFlag){
 		for(int i = 0; i < 9; i++){
@@ -128,9 +158,11 @@ public class Sudoku {
 	
 	
 	/**
-	 * @param i
-	 * @param j
-	 * @param number
+	 * Insert number into (i,j) position in the board.
+	 * 
+	 * @param i row coordinate
+	 * @param j column coordinate
+	 * @param number number to insert
 	 */
 	public void insertNumber(int i, int j, int number){
 		if(9>i && 9>j && 0<=i && 0<=j && 0<number && 9>=number){
@@ -172,6 +204,7 @@ public class Sudoku {
 	}
 	
 	// Prints each numbers boolean grid. Used for testing aswell.
+	@SuppressWarnings("unused")
 	private void printNumber(int number){ 
 		switch(number){
 		case 1:
@@ -258,12 +291,7 @@ public class Sudoku {
 		}
 	}
 	
-	/**
-	 * @param number
-	 * @param i
-	 * @param j
-	 * @return
-	 */
+	// Method to see if a number can fit in a cell
 	private boolean canFit(int number, int i, int j){
 		switch(number){
 		case 1:
@@ -327,10 +355,16 @@ public class Sudoku {
 		}
 	}
 	
+	/**
+	 * Solves or tries to solve, the Sudoku game. Has a limit of iterations through it since by this time
+	 * if it doesn't solve it in < 10 iterations it won't happen.
+	 * 
+	 * @return true if solved.
+	 */
 	public boolean solve(){
 		calculateCanSet();
 		int counter = 0;
-		while(!solved() && counter < 1500){
+		while(!solved() && counter < limit){
 			solveSudokuPrivate();
 			counter++;
 			//System.out.println(counter);
@@ -406,7 +440,9 @@ public class Sudoku {
 	}
 	
 	/**
-	 * @return
+	 * Check if Sudoku is solved.
+	 * 
+	 * @return true if solved.
 	 */
 	public boolean solved(){
 		for(int i = 0; i < 9; i++)
@@ -414,5 +450,23 @@ public class Sudoku {
 				if(0 == sudoku[i][j])
 					return false;
 		return true;
+	}
+	
+	/**
+	 * Set a variable iterations limit.
+	 * 
+	 * @param limit int iterations
+	 */
+	public void setLimit(int limit){
+		this.limit = limit;
+	}
+	
+	/**
+	 * Gets the limit number of iterations
+	 * 
+	 * @return int limit
+	 */
+	public int getLimit(){
+		return limit;
 	}
 }
