@@ -35,14 +35,18 @@ public class Solution {
 	 */
 	public static void main(String[] args) {
 		sudoku = new Sudoku();
-		//initExpert();
-		initEasy();
+		initExpert();
+		//initEasy();
+		//sudoku.clear();
 		//initHard();
 		sudoku.printSudokuBoard(false);
 		sudoku.solve();
 		
-		System.out.println();
-		System.out.println();
+		
+		/*System.out.println(sudoku.canSet[6][1]);
+		System.out.println(sudoku.canSet[6][1]);
+		if(sudoku.canSet[6][1].equals(sudoku.canSet[6][2]))
+			System.out.println("yes!");*/
 		System.out.println();
 		System.out.println();
 		System.out.println();
