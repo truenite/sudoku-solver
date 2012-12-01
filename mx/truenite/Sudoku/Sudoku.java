@@ -28,20 +28,8 @@ import java.util.TreeSet;
 public class Sudoku {
 	// Sudoku grid
 	private int[][] sudoku;
-	// This each represent each quadrant for each number, returning true if they exist in that quadrant.
-	// This provides quicker access, not need to search every time you want to know if that three square quadrant has x number.
-	private boolean[][] one;
-	private boolean[][] two;
-	private boolean[][] three;
-	private boolean[][] four;
-	private boolean[][] five;
-	private boolean[][] six;
-	private boolean[][] seven;
-	private boolean[][] eight;
-	private boolean[][] nine;
 	// Flags. True if if its solved for x number.
-	private boolean oneSolved, twoSolved, threeSolved, fourSolved, fiveSolved, sixSolved, sevenSolved, eightSolved, nineSolved = false;
-	private TreeSet<Integer>[][] canSet;
+	public TreeSet<Integer>[][] canSet;
 	// default iterations limit
 	private int limit = 1500;
 	
@@ -50,16 +38,13 @@ public class Sudoku {
 	 */
 	public Sudoku(){
 		sudoku =  new int[9][9];
-		one = new boolean[3][3];
-		two = new boolean[3][3];
-		three = new boolean[3][3];
-		four = new boolean[3][3];
-		five = new boolean[3][3];
-		six = new boolean[3][3];
-		seven = new boolean[3][3];
-		eight = new boolean[3][3];
-		nine = new boolean[3][3];
 		canSet = new TreeSet[9][9];
+		for(int i = 0; i <9;i++){
+			for(int j = 0; j <9; j++){
+				canSet[i][j] = canSet[i][j] = initTreeSet();
+			}
+		}
+		
 	}
 	
 	/**
@@ -68,45 +53,23 @@ public class Sudoku {
 	public Sudoku(int lim){
 		limit = lim;
 		sudoku =  new int[9][9];
-		one = new boolean[3][3];
-		two = new boolean[3][3];
-		three = new boolean[3][3];
-		four = new boolean[3][3];
-		five = new boolean[3][3];
-		six = new boolean[3][3];
-		seven = new boolean[3][3];
-		eight = new boolean[3][3];
-		nine = new boolean[3][3];
 		canSet = new TreeSet[9][9];
+		for(int i = 0; i <9;i++){
+			for(int j = 0; j <9; j++){
+				canSet[i][j] = initTreeSet(); 
+			}
+		}
+		
 	}
 	
+	private TreeSet<Integer> initTreeSet(){
+		TreeSet<Integer> newOne = new TreeSet<Integer>();
+		for(int i = 1; i < 10; i++){
+			newOne.add(i);
+		}
+		return newOne;
+	}
 
-	/**
-	 * Returns true if the Sudoku game is solved. False otherwise.
-	 * 
-	 * @return boolean
-	 */
-	public boolean checkSolved(){
-		oneSolved = checkSolved(one);
-		twoSolved = checkSolved(two);
-		threeSolved = checkSolved(three);
-		fourSolved = checkSolved(four);
-		fiveSolved = checkSolved(five);
-		sixSolved = checkSolved(six);
-		sevenSolved = checkSolved(seven);
-		eightSolved = checkSolved(eight);
-		nineSolved = checkSolved(nine);
-		return (oneSolved && twoSolved && threeSolved && fourSolved && fiveSolved && sixSolved && sevenSolved && eightSolved && nineSolved);
-	}
-	
-	private boolean checkSolved(boolean[][] number){
-		for(int i = 0; i < 3; i++)
-			for(int j = 0; j<3; j++)
-				if(number[i][j]==false)
-					return false;
-		return true;
-	}
-	
 	/**
 	 *  Prints the Sudoku board in console. 
 	 * 
@@ -140,7 +103,7 @@ public class Sudoku {
 			for(int j = 0; j < 9 ; j++){
 				System.out.print(canSet[i][j]+" ");
 				if(2 == j || 5 == j)
-					System.out.print("|");
+					System.out.print("\t\t| "+i+", "+(j+1));
 				
 			}
 			if(2 == i || 5 == i){
@@ -165,193 +128,27 @@ public class Sudoku {
 	public void insertNumber(int i, int j, int number){
 		if(9>i && 9>j && 0<=i && 0<=j && 0<number && 9>=number){
 			sudoku[i][j] = number;
-			switch(number){
-			case 1:
-				one[i/3][j/3] = true;
-				break;
-			case 2:
-				two[i/3][j/3] = true;
-				break;
-			case 3:
-				three[i/3][j/3] = true;
-				break;
-			case 4:
-				four[i/3][j/3] = true;
-				break;
-			case 5:
-				five[i/3][j/3] = true;
-				break;
-			case 6:
-				six[i/3][j/3] = true;
-				break;
-			case 7:
-				seven[i/3][j/3] = true;
-				break;
-			case 8:
-				eight[i/3][j/3] = true;
-				break;
-			case 9:
-				nine[i/3][j/3] = true;
-				break;
+			for(int k = 0; k < 9; k++){
+				if(canSet[i][k].contains(number))
+					canSet[i][k].remove(number);
+				if(canSet[k][j].contains(number))
+					canSet[k][j].remove(number);
 			}
+			for(int h = (i/3)*3; h < ((i/3)*3)+3; h++){
+				for(int m = (j/3)*3; m < ((j/3)*3)+3; m++){
+					if(canSet[h][m].contains(number))
+						canSet[h][m].remove(number);
+				}
+			}
+			canSet[i][j].clear();
 		}else{
 			System.out.println("Fatal error while inserting number: "+number+" in: "+i+", "+j);
 			System.exit(0);
 		}
-		calculateCanSet();
+		//calculateCanSet();
 	}
 	
-	// Prints each numbers boolean grid. Used for testing aswell.
-	public void printNumber(int number){ 
-		switch(number){
-		case 1:
-			for(int i = 0; i < 3;i++){
-				for(int j = 0;j<3;j++){
-					System.out.print(one[i][j]+"\t");
-				}
-				System.out.println();
-				System.out.println();
-			}
-			break;
-		case 2:
-			for(int i = 0; i < 3;i++){
-				for(int j = 0;j<3;j++){
-					System.out.print(two[i][j]+"\t");
-				}
-				System.out.println();
-				System.out.println();
-			}
-			break;
-		case 3:
-			for(int i = 0; i < 3;i++){
-				for(int j = 0;j<3;j++){
-					System.out.print(three[i][j]+"\t");
-				}
-				System.out.println();
-				System.out.println();
-			}
-			break;
-		case 4:
-			for(int i = 0; i < 3;i++){
-				for(int j = 0;j<3;j++){
-					System.out.print(four[i][j]+"\t");
-				}
-				System.out.println();
-				System.out.println();
-			}
-			break;
-		case 5:
-			for(int i = 0; i < 3;i++){
-				for(int j = 0;j<3;j++){
-					System.out.print(five[i][j]+"\t");
-				}
-				System.out.println();
-				System.out.println();
-			}
-			break;
-		case 6:
-			for(int i = 0; i < 3;i++){
-				for(int j = 0;j<3;j++){
-					System.out.print(six[i][j]+"\t");
-				}
-				System.out.println();
-				System.out.println();
-			}
-			break;
-		case 7:
-			for(int i = 0; i < 3;i++){
-				for(int j = 0;j<3;j++){
-					System.out.print(seven[i][j]+"\t");
-				}
-				System.out.println();
-				System.out.println();
-			}
-			break;
-		case 8:
-			for(int i = 0; i < 3;i++){
-				for(int j = 0;j<3;j++){
-					System.out.print(eight[i][j]+"\t");
-				}
-				System.out.println();
-				System.out.println();
-			}
-			break;
-		case 9:
-			for(int i = 0; i < 3;i++){
-				for(int j = 0;j<3;j++){
-					System.out.print(nine[i][j]+"\t");
-				}
-				System.out.println();
-				System.out.println();
-			}
-			break;
-		}
-	}
-	
-	// Method to see if a number can fit in a cell
-	private boolean canFit(int number, int i, int j){
-		switch(number){
-		case 1:
-			if(one[i/3][j/3])
-				return false;
-			break;
-		case 2:
-			if(two[i/3][j/3])
-				return false;
-			break;
-		case 3:
-			if(three[i/3][j/3])
-				return false;
-			break;
-		case 4:
-			if(four[i/3][j/3])
-				return false;
-			break;
-		case 5:
-			if(five[i/3][j/3])
-				return false;
-			break;
-		case 6:
-			if(six[i/3][j/3])
-				return false;
-			break;
-		case 7:
-			if(seven[i/3][j/3])
-				return false;
-			break;
-		case 8:
-			if(eight[i/3][j/3])
-				return false;
-			break;
-		case 9:
-			if(nine[i/3][j/3])
-				return false;
-			break;
-		}
-		 for(int x = 0; x < 9; x++)
-			if(sudoku[i][x] == number || sudoku[x][j] == number || sudoku[i][j] != 0)
-				return false;
-		return true;
-	}
-	
-	private void calculateCanSet(){
-		for(int i = 0; i <9;i++){
-			for(int j = 0; j <9; j++){
-				canSet[i][j] = new TreeSet<Integer>();
-			}
-		}
-		for(int i = 0; i <9;i++){
-			for(int j = 0; j <9; j++){
-				for(int k = 1; k < 10; k++){
-					if(canFit(k,i,j)){
-						canSet[i][j].add(k);
-						//System.out.println(k+" en: "+i+", "+j);
-					}
-				}
-			}
-		}
-	}
-	
+		
 	/**
 	 * Solves or tries to solve, the Sudoku game. Has a limit of iterations through it since by this time
 	 * if it doesn't solve it in < 10 iterations it won't happen.
@@ -359,20 +156,25 @@ public class Sudoku {
 	 * @return true if solved.
 	 */
 	public boolean solve(){
-		calculateCanSet();
+		//calculateCanSet();
 		int counter = 0;
 		while(!solved() && counter < limit){
 			solveSudokuPrivate();
 			counter++;
-			//System.out.println(counter);
 		}
-		System.out.println(counter);
-		return checkSolved();
+		//System.out.println(counter);
+		return solved();
+	}
+
+	private void solveSudokuPrivate(){
+		searchNakedDoubles();
+		onlyOneForRegion();
+		onlyOneForRowColumn();
+		onlyOneForCell();
 	}
 	
-	
-	private void solveSudokuPrivate(){
-		// Where a number can only be in one cell in a quadrant.
+	private void onlyOneForRegion(){
+		// Where a number can only be in one cell in a region.
 		// Means there's no other option so we insert.
 		for(int n = 1; n < 10; n++){
 			for(int i = 0; i <3;i++){
@@ -397,7 +199,9 @@ public class Sudoku {
 				}
 			}
 		}
-		
+	}
+	
+	private void onlyOneForRowColumn(){
 		// Where a number can only be in one cell in a row or column.
 		// Means there's no other option so we insert.
 		for(int i = 0; i <9;i++){
@@ -420,12 +224,104 @@ public class Sudoku {
 			    }
 			}
 		}
+	}
+	
+	
+	private void onlyOneForCell(){
 		// Where there's only 1 number that can be inserted in a cell. Means, the number could go in other squares
 		// But for that cell there's only one option.
 		for(int i = 0; i <9;i++){
 			for(int j = 0; j <9; j++){
 				if(canSet[i][j].size()==1){
 					insertNumber(i, j, canSet[i][j].first());
+				}
+			}
+		}
+	}
+	
+	private void searchNakedDoubles(){
+		// We look after 2 squares in a region that can only have the same 2 numbers.
+		for(int i = 0; i <3;i++){
+			for(int j = 0; j <3; j++){
+				// here we are in each region
+				int[][] coords = new int[9][2];
+				int count = 0;
+				int x = 0;
+				int y = 0;
+				for(int k = 0;k<3;k++){
+					for(int l = 0;l<3;l++){
+						x = k+(i*3);
+						y = l+(j*3);
+						if(2 == canSet[x][y].size()){
+							coords[count][0]=x;
+							coords[count][1]=y;
+							count++;
+						}
+					}
+				}
+				if(count>=2){
+					for(int k = 0; k < count-1; k++)
+						for(int l = k+1; l<count;l++){
+							if(canSet[coords[k][0]][coords[k][1]].equals(canSet[coords[l][0]][coords[l][1]])){
+								deleteNakedDoubles(coords[k][0], coords[k][1], coords[l][0], coords[l][1]);
+							}
+						}
+				}
+			}
+		}
+	}
+	private void deleteNakedDoubles(int x1, int y1, int x2, int y2){
+		/*System.out.println("coords: "+x1+", "+y1);
+		System.out.println("coords: "+x2+", "+y2);
+		System.out.println("canset: "+canSet[x1][y1]);*/
+		
+		@SuppressWarnings("unchecked")
+		TreeSet<Integer> clone = (TreeSet<Integer>)canSet[x1][y1].clone();
+		int[] nums = new int[2];
+		nums[0]=clone.first();
+		clone.remove(nums[0]);
+		nums[1]=clone.first();
+		/*System.out.println("canset: "+clone);
+		System.out.println("nums: "+nums[0]+", "+nums[1]);*/
+		for(int i = (x1/3)*3; i < ((x1/3)*3)+3; i++){
+			for(int j = (y1/3)*3; j < ((y1/3)*3)+3; j++){
+				if(!(i== x1 && j==y1) && !(i==x2 && j==y2)){
+					if(canSet[i][j].contains(nums[0])){
+						//System.out.println("removing "+nums[0]+" from: "+i+", "+j);
+						canSet[i][j].remove(nums[0]);
+					}
+					if(canSet[i][j].contains(nums[1])){
+						//System.out.println("removing "+nums[1]+" from: "+i+", "+j);
+						canSet[i][j].remove(nums[1]);
+					}
+				}
+			}
+		}
+		if(x1 == x2){
+			for(int j = 0; j < 9; j++){
+				if(j!=y1 && j!=y2){
+					if(canSet[x1][j].contains(nums[0])){
+						//System.out.println("removing "+nums[0]+" from: "+x1+", "+j);
+						canSet[x1][j].remove(nums[0]);
+					}
+					if(canSet[x1][j].contains(nums[1])){
+						//System.out.println("removing "+nums[1]+" from: "+x1+", "+j);
+						canSet[x1][j].remove(nums[1]);
+					}
+				}
+			}
+		}
+		if(y1==y2){
+			for(int i = 0; i<9;i++){
+				if(i!=x1 && i!=x2){
+					if(canSet[i][y1].contains(nums[0])){
+						//System.out.println("removing "+nums[0]+" from: "+i+", "+y1);
+						canSet[i][y1].remove(nums[0]);
+					}
+					if(canSet[i][y1].contains(nums[1])){
+						//System.out.println("removing "+nums[1]+" from: "+i+", "+y1);
+						canSet[i][y1].remove(nums[1]);
+					}
 				}
 			}
 		}
@@ -460,5 +356,16 @@ public class Sudoku {
 	 */
 	public int getLimit(){
 		return limit;
+	}
+	
+	public void clear(){
+		sudoku =  new int[9][9];
+		canSet = new TreeSet[9][9];
+		for(int i = 0; i <9;i++){
+			for(int j = 0; j <9; j++){
+				canSet[i][j] = canSet[i][j] = initTreeSet();
+			}
+		}
+		
 	}
 }
