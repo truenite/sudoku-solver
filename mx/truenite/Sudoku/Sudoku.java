@@ -2,7 +2,6 @@
  * Sudoku.java
  * 30/11/2012
  * @author Diego Garcia
- * diego.mendiburu@gmail.com
  * 
  * Copyright (C) 2012  Diego Garcia
  * 
@@ -86,7 +85,7 @@ public class Sudoku {
 			if(2 == i || 5 == i){
 				System.out.println();
 				for(int j = 0; j < 10 ; j++)
-					System.out.print("––");
+					System.out.print("â€“â€“");
 			}
 			System.out.println();
 		}
@@ -109,7 +108,7 @@ public class Sudoku {
 			if(2 == i || 5 == i){
 				System.out.println();
 				for(int j = 0; j < 10 ; j++)
-					System.out.print("––");
+					System.out.print("â€“â€“");
 			}
 			System.out.println();
 		}
